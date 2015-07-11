@@ -1,4 +1,4 @@
-package com.udacity.gradle.builditbigger;
+package com.dmtaiwan.alexander.builditbigger;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

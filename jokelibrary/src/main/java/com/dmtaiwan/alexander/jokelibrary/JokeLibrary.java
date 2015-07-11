@@ -1,4 +1,4 @@
-package com.udacity.gradle.jokelibrary;
+package com.dmtaiwan.alexander.jokelibrary;
 
 public class JokeLibrary {
     public String getJoke() {
