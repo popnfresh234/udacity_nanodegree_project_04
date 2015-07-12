@@ -11,4 +11,11 @@ public class MainActivityTest extends TestCase {
         MainActivity mainActivity = new MainActivity();
         assert mainActivity.resultString()== null;
     }
+
+    public void testGetJoke() throws Exception {
+        MainActivity mainActivity = new MainActivity();
+        String joke = mainActivity.getJoke();
+        assertNotNull(joke);
+
+    }
 }

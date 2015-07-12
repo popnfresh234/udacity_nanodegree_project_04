@@ -98,4 +98,12 @@ public class MainActivity extends ActionBarActivity {
     public void hideProgress() {
         mMainActivityFragment.hideProgress();
     }
+
+    public String getJoke() {
+        return new JokeLibrary().getJoke();
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
 }
