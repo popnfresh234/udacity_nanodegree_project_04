@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main { java.srcDirs = ['src/main/java', 'src/test/java/', 'src/androidTest/java'] }
+    }
 }
 
 dependencies {
@@ -25,7 +28,9 @@ dependencies {
     // Added for AdMob
     compile 'com.google.android.gms:play-services:7.3.0'
     //Add java library
-    compile project (':jokelibrary')
+    compile project(':jokelibrary')
     //Add android library
     compile project(':jokedisplaylibrary')
+    // Unit testing dependencies
+    testCompile 'junit:junit:4.12'
 }

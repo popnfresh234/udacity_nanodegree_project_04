@@ -24,13 +24,10 @@ public class MyServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        String name = req.getParameter("name");
+
         JokeLibrary jokeLibrary = new JokeLibrary();
         String joke = jokeLibrary.getJoke();
         resp.setContentType("text/plain");
-        if (name == null) {
-            resp.getWriter().println("Please enter a name");
-        }
         resp.getWriter().println(joke);
     }
 }

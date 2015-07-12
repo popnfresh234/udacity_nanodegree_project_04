@@ -1,42 +1,48 @@
 package com.dmtaiwan.alexander.builditbigger;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.util.Pair;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.dmtaiwan.alexander.jokelibrary.JokeLibrary;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 
-public class MainActivity extends ActionBarActivity{
+public class MainActivity extends ActionBarActivity {
     private JokeLibrary mJokeLibrary;
+    private InterstitialAd mInterstitialAd;
+    private Context mContext;
+    private MainActivityFragment mMainActivityFragment;
+    private String mResult = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext = this;
         mJokeLibrary = new JokeLibrary();
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.interstitial_ad_unit_id));
+        requestNewInterstitial();
+
+        FragmentManager fm = getSupportFragmentManager();
+        mMainActivityFragment = (MainActivityFragment) fm.findFragmentById(R.id.fragment_main);
     }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
 
 
     @Override
@@ -62,48 +68,34 @@ public class MainActivity extends ActionBarActivity{
     }
 
     public void tellJoke(View view) {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }else {
+            mMainActivityFragment.showProgress();
+            new EndpointsAsyncTask().execute(this);
+        }
 
-//        String joke = mJokeLibrary.getJoke();
-//        Intent intent = new Intent(this, JokeDisplayActivity.class);
-//        intent.putExtra(Utilities.JOKE, joke);
-//        startActivity(intent);
-        new ServletPostAsyncTask().execute(new Pair<Context, String>(this, "BOB"));
-    }
-
-    class ServletPostAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
-        private Context context;
-
-        @Override
-        protected String doInBackground(Pair<Context, String>... params) {
-            context = params[0].first;
-            String name = params[0].second;
-
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost("http://10.0.3.2:8080/hello"); // 10.0.2.2 is localhost's IP address in Android emulator
-            try {
-                // Add name data to request
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-                nameValuePairs.add(new BasicNameValuePair("name", name));
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-                // Execute HTTP Post Request
-                HttpResponse response = httpClient.execute(httpPost);
-                if (response.getStatusLine().getStatusCode() == 200) {
-                    return EntityUtils.toString(response.getEntity());
-                }
-                return "Error: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase();
-
-            } catch (ClientProtocolException e) {
-                return e.getMessage();
-            } catch (IOException e) {
-                return e.getMessage();
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                mMainActivityFragment.showProgress();
+                new EndpointsAsyncTask().execute(mContext);
             }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-        }
+        });
     }
 
+
+
+    public String resultString() {
+        return mResult;
+    }
+
+    public void execTask() {
+        new EndpointsAsyncTask().execute();
+    }
+
+    public void hideProgress() {
+        mMainActivityFragment.hideProgress();
+    }
 }
