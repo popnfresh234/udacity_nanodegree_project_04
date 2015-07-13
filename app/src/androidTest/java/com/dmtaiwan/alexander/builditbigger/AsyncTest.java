@@ -1,5 +1,6 @@
 package com.dmtaiwan.alexander.builditbigger;
 
+import android.content.Context;
 import android.test.InstrumentationTestCase;
 
 import java.util.concurrent.CountDownLatch;
@@ -13,22 +14,27 @@ public class AsyncTest extends InstrumentationTestCase {
     final CountDownLatch signal = new CountDownLatch(1);
 
 
-    public void testAsync() throws Throwable{
-        final EndpointsAsyncTask task = new EndpointsAsyncTask(){
+    public void testAsync() throws Throwable {
 
+        final EndpointsAsyncTask task = new EndpointsAsyncTask() {
+
+            @Override
+            protected String doInBackground(Context... params) {
+                return super.doInBackground(params);
+            }
 
             @Override
             protected void onPostExecute(String result) {
-                super.onPostExecute(result);
                 assertNotNull(result);
                 signal.countDown();
             }
         };
 
         runTestOnUiThread(new Runnable() {
+            Context context = new MainActivity();
             @Override
             public void run() {
-                task.execute();
+                task.execute(context);
             }
         });
         signal.await(30, TimeUnit.SECONDS);
