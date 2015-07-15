@@ -31,7 +31,8 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
             e.printStackTrace();
         }
         HttpClient httpClient = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost("http://10.0.3.2:8080/hello"); // 10.0.2.2 is localhost's IP address in Android emulator
+        HttpPost httpPost = new HttpPost("http://10.0.3.2:8080/hello"); // local server
+//        HttpPost httpPost = new HttpPost("https://udacityproject04.appspot.com/hello"); // deployed backend
         try {
             // Execute HTTP Post Request
             HttpResponse response = httpClient.execute(httpPost);

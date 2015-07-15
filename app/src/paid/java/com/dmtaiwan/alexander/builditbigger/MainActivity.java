@@ -9,14 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.dmtaiwan.alexander.jokelibrary.JokeLibrary;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
 
 
 public class MainActivity extends ActionBarActivity {
     private JokeLibrary mJokeLibrary;
-    private InterstitialAd mInterstitialAd;
+
     private Context mContext;
     private MainActivityFragment mMainActivityFragment;
     private String mResult = null;
@@ -28,20 +25,14 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         mContext = this;
         mJokeLibrary = new JokeLibrary();
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getResources().getString(R.string.interstitial_ad_unit_id));
-        requestNewInterstitial();
+
+
 
         FragmentManager fm = getSupportFragmentManager();
         mMainActivityFragment = (MainActivityFragment) fm.findFragmentById(R.id.fragment_main);
+
     }
 
-    private void requestNewInterstitial() {
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        mInterstitialAd.loadAd(adRequest);
-    }
 
 
 
@@ -68,21 +59,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void tellJoke(View view) {
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        }else {
             mMainActivityFragment.showProgress();
             new EndpointsAsyncTask().execute(this);
-        }
 
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                requestNewInterstitial();
-                mMainActivityFragment.showProgress();
-                new EndpointsAsyncTask().execute(mContext);
-            }
-        });
     }
 
 
@@ -91,9 +70,7 @@ public class MainActivity extends ActionBarActivity {
         return mResult;
     }
 
-    public void execTask() {
-        new EndpointsAsyncTask().execute();
-    }
+
 
     public void hideProgress() {
         mMainActivityFragment.hideProgress();
@@ -103,7 +80,5 @@ public class MainActivity extends ActionBarActivity {
         return new JokeLibrary().getJoke();
     }
 
-    public Context getContext() {
-        return mContext;
-    }
+
 }

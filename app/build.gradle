@@ -18,11 +18,11 @@ android {
         }
     }
 
-    productFlavors{
-        free{
+    productFlavors {
+        free {
             applicationId "com.dmtaiwan.alexander.flavors.free"
         }
-        paid{
+        paid {
             applicationId "com.dmtaiwan.alexander.flavors.free"
         }
     }
@@ -30,21 +30,29 @@ android {
     sourceSets {
         main { java.srcDirs = ['src/main/java', 'src/test/java/', 'src/androidTest/java'] }
 
-        paid{
+        paid {
             res.srcDirs = ['src/paid/res']
+            java.srcDirs = ['src/paid/java', 'src/paid/java/']
         }
 
         free {
             res.srcDirs = ['src/free/res']
+            java.srcDirs = ['src/free/java', 'src/free/java/']
         }
     }
 }
+
+
+task test123 (dependsOn:":backend:appengineRun") {
+    tasks.getByPath(":backend:appengineStop").execute()
+}
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.1.1'
     // Added for AdMob
-    compile 'com.google.android.gms:play-services:7.3.0'
+    freeCompile 'com.google.android.gms:play-services:7.3.0'
     //Add java library
     compile project(':jokelibrary')
     //Add android library
