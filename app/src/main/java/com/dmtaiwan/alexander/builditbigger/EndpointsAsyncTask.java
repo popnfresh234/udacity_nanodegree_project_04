@@ -15,18 +15,21 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Alexander on 7/12/2015.
  */
-public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
+public class EndpointsAsyncTask extends AsyncTask<Context, Void, ArrayList<String>> {
     private Context mContext;
 
     @Override
-    protected String doInBackground(Context... params) {
+    protected ArrayList<String> doInBackground(Context... params) {
+        ArrayList<String> list = new ArrayList<String>();
+
         mContext = params[0];
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -37,23 +40,35 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
             // Execute HTTP Post Request
             HttpResponse response = httpClient.execute(httpPost);
             if (response.getStatusLine().getStatusCode() == 200) {
-                return EntityUtils.toString(response.getEntity());
+                list.add(0, Utilities.SUCCESS);
+                list.add(1, EntityUtils.toString(response.getEntity()));
+                return list;
             }
-            return "Error: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase();
+            list.add(0, Utilities.ERROR);
+            list.add(1, "Error: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+            return list;
 
         } catch (ClientProtocolException e) {
-            return e.getMessage();
+            list.add(0, Utilities.ERROR);
+            list.add(1, e.getMessage());
+            return list;
         } catch (IOException e) {
-            return e.getMessage();
+            list.add(0, Utilities.ERROR);
+            list.add(1, e.getMessage());
+            return list;
         }
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(ArrayList<String> result) {
+        String resultCode = result.get(0);
+        String resultString = result.get(1);
+
         Intent intent = new Intent(mContext, JokeDisplayActivity.class);
-        intent.putExtra(Utilities.JOKE, result);
+        intent.putExtra(Utilities.RESULT, resultString);
+        intent.putExtra(Utilities.RESULT_CODE, resultCode);
         mContext.startActivity(intent);
-        MainActivity mainActivity=  (MainActivity)mContext;
+        MainActivity mainActivity = (MainActivity) mContext;
         mainActivity.hideProgress();
     }
 }

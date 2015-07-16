@@ -44,7 +44,7 @@ android {
     }
 }
 
-task runCheck (){
+task runTest (){
     dependsOn {
         "connectedCheck"
     }
@@ -53,7 +53,9 @@ task runCheck (){
     }
 }
 
-task runAppEngine (dependsOn: ":backend:appengineRun") {
+
+//This task starts the the app engine, runs the test  for the Async Task, and finally stops the app engine
+task runAppEngineAndTest (dependsOn: ":backend:appengineRun") {
     project(":backend").afterEvaluate { backend ->
         backend.extensions.appengine.daemon = true
     }
@@ -62,8 +64,8 @@ task runAppEngine (dependsOn: ":backend:appengineRun") {
     }
 }
 
-runAppEngine.finalizedBy runCheck
-runCheck.finalizedBy ":backend:appengineStop"
+runAppEngineAndTest.finalizedBy runTest
+runTest.finalizedBy ":backend:appengineStop"
 
 
 

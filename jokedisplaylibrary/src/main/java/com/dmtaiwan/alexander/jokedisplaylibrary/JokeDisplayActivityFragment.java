@@ -22,7 +22,7 @@ public class JokeDisplayActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_joke_display, container, false);
         if (getActivity().getIntent() != null) {
             TextView jokeTextView = (TextView) rootView.findViewById(R.id.joke_text_view);
-            jokeTextView.setText(getActivity().getIntent().getStringExtra(Utilities.JOKE));
+            jokeTextView.setText(getActivity().getIntent().getStringExtra(Utilities.RESULT));
         }
         return rootView;
     }
