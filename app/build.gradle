@@ -49,7 +49,7 @@ task runCheck (){
         "connectedCheck"
     }
     doLast {
-        println "yay"
+        println "All tests complete"
     }
 }
 
