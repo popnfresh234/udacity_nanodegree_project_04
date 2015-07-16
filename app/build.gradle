@@ -43,9 +43,16 @@ android {
 }
 
 
-task test123 (dependsOn:":backend:appengineRun") {
-    tasks.getByPath(":backend:appengineStop").execute()
+task runAppEngine (dependsOn: ":backend:appengineRun") {
+    project(":backend").afterEvaluate { backend ->
+        backend.extensions.appengine.daemon = true
+    }
+    doLast {
+        test
+    }
 }
+
+runAppEngine.finalizedBy ":backend:appengineStop"
 
 
 dependencies {
