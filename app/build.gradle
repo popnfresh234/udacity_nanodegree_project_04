@@ -28,7 +28,9 @@ android {
     }
 
     sourceSets {
-        main { java.srcDirs = ['src/main/java', 'src/test/java/', 'src/androidTest/java'] }
+        main {
+            java.srcDirs = ['src/main/java', 'src/test/java/', 'src/androidTest/java', 'src/test/java']
+        }
 
         paid {
             res.srcDirs = ['src/paid/res']
@@ -42,17 +44,27 @@ android {
     }
 }
 
+task runCheck (){
+    dependsOn {
+        "connectedCheck"
+    }
+    doLast {
+        println "yay"
+    }
+}
 
 task runAppEngine (dependsOn: ":backend:appengineRun") {
     project(":backend").afterEvaluate { backend ->
         backend.extensions.appengine.daemon = true
     }
     doLast {
-        test
+        println "started the server!"
     }
 }
 
-runAppEngine.finalizedBy ":backend:appengineStop"
+runAppEngine.finalizedBy runCheck
+runCheck.finalizedBy ":backend:appengineStop"
+
 
 
 dependencies {
