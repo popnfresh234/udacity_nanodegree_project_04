@@ -44,28 +44,10 @@ android {
     }
 }
 
-task runTest (){
-    dependsOn {
-        "connectedCheck"
-    }
-    doLast {
-        println "All tests complete"
-    }
-}
 
 
-//This task starts the the app engine, runs the test  for the Async Task, and finally stops the app engine
-task runAppEngineAndTest (dependsOn: ":backend:appengineRun") {
-    project(":backend").afterEvaluate { backend ->
-        backend.extensions.appengine.daemon = true
-    }
-    doLast {
-        println "started the server!"
-    }
-}
 
-runAppEngineAndTest.finalizedBy runTest
-runTest.finalizedBy ":backend:appengineStop"
+
 
 
 

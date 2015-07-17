@@ -34,8 +34,10 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, ArrayList<Strin
             e.printStackTrace();
         }
         HttpClient httpClient = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost("http://10.0.3.2:8080/hello"); // local server
-//        HttpPost httpPost = new HttpPost("https://udacityproject04.appspot.com/hello"); // deployed backend
+
+        HttpPost httpPost = new HttpPost("http://10.0.3.2:8080/hello"); // local server (genymotion)
+//      HttpPost httpPost = new HttpPost("http://10.0.2.2:8080/hello"); //local server (android emulator)
+//      HttpPost httpPost = new HttpPost("https://udacityproject04.appspot.com/hello"); // deployed backend
         try {
             // Execute HTTP Post Request
             HttpResponse response = httpClient.execute(httpPost);
